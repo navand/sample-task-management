@@ -1,7 +1,16 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { CssBaseline, AppBar, Toolbar, Paper, Stepper, Button, Typography, Modal } from '@material-ui/core';
+import {
+  CssBaseline,
+  AppBar,
+  Toolbar,
+  Paper,
+  Stepper,
+  Button,
+  Typography,
+  Modal,
+} from '@material-ui/core';
 import CreateTask from '../../components/CreateTask/CreateTask';
 import _ from 'lodash';
 
@@ -61,11 +70,11 @@ const App = () => {
 
   const createTask = () => {
     setOpen(true);
-  }
+  };
 
   const handleClose = () => {
     setOpen(false);
-  }
+  };
 
   return (
     <React.Fragment>
@@ -80,7 +89,12 @@ const App = () => {
       <main className={classes.layout}>
         <Paper className={classes.paper}>
           <React.Fragment>
-            <Button variant="contained" color="primary" className={classes.button} onClick={createTask}>
+            <Button
+              variant="contained"
+              color="primary"
+              className={classes.button}
+              onClick={createTask}
+            >
               Create Your First Task ;)
             </Button>
           </React.Fragment>
@@ -93,7 +107,7 @@ const App = () => {
         aria-describedby="simple-modal-description"
         className={classes.modal}
       >
-        <CreateTask />
+        <CreateTask close={handleClose} />
       </Modal>
     </React.Fragment>
   );
