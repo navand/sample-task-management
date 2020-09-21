@@ -12,8 +12,8 @@ import {
   Button,
 } from '@material-ui/core';
 import { useFormik } from 'formik';
-import * as Yup from 'yup';
 import { taskActions } from '../../actions';
+import * as Yup from 'yup';
 import _ from 'lodash';
 
 const useStyles = makeStyles((theme) => ({
@@ -42,10 +42,13 @@ const CreateTask = (props) => {
   });
 
   const formik = useFormik({
-    initialValues: { title: '', description: '', gifts: '', priority: 'Low' },
+    initialValues: props.editMode
+      ? { ...props.task }
+      : { title: '', description: '', gifts: '', priority: 'Low' },
     validationSchema: TaskSchema,
     onSubmit: (values) => {
-      dispatch(taskActions.create(values));
+      if (props.editMode) dispatch(taskActions.edit(props.taskId, values));
+      else dispatch(taskActions.create(values));
       props.close();
     },
   });
@@ -108,7 +111,7 @@ const CreateTask = (props) => {
           </Grid>
           <Grid item xs={12} style={{ textAlign: 'center' }}>
             <Button variant="contained" color="primary" onClick={formik.handleSubmit}>
-              Add To Tasks
+              {props.editMode ? 'Edit Task' : 'Add To Tasks'}
             </Button>
           </Grid>
         </Grid>
@@ -119,6 +122,9 @@ const CreateTask = (props) => {
 
 CreateTask.propTypes = {
   close: PropTypes.func,
+  editMode: PropTypes.bool,
+  taskId: PropTypes.number,
+  task: PropTypes.object,
 };
 
 export default CreateTask;

@@ -1,7 +1,6 @@
 import { taskTypes } from '../actions/types';
 
 const create = (task) => {
-  console.log(task);
   return (dispatch, getState) => {
     const taskId = getState().task.lastTaskId + 1;
     return dispatch({ type: taskTypes.CREATE_TASK, taskId, task });
