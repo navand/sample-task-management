@@ -67,18 +67,32 @@ const TasksList = (props) => {
   const selectedTaskId = useRef(0);
   const selectedTask = useRef({});
 
-  const doneTask = (taskId) => {
+  const doneTask = (e, taskId) => {
+    e.stopPropagation();
+    setOpen(false);
     dispatch(taskActions.done(taskId));
   };
 
   const showTaskDetails = (taskId, task) => {
-    selectedTaskId.current = taskId;
-    selectedTask.current = task;
-    setOpen(true);
+    if (!props.doneTasks) {
+      selectedTaskId.current = taskId;
+      selectedTask.current = task;
+      setOpen(true);
+    }
   };
 
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const onEditTask = (e) => {
+    setOpen(false);
+    props.onEditTask(e, selectedTaskId.current, selectedTask.current);
+  };
+
+  const onDeleteTask = () => {
+    setOpen(false);
+    dispatch(taskActions._delete(selectedTaskId.current));
   };
 
   return (
@@ -105,30 +119,32 @@ const TasksList = (props) => {
                   {props.tasks[taskId].description}
                 </Typography>
               </Grid>
-              <Grid
-                item
-                xs={6}
-                style={{ textAlign: 'right' }}
-                className={classes.group}
-                justify="flex-end"
-              >
-                <Button
-                  variant="contained"
-                  color="primary"
-                  className={classes.button}
-                  onClick={() => doneTask(taskId)}
+              {!props.doneTasks ? (
+                <Grid
+                  item
+                  xs={6}
+                  style={{ textAlign: 'right' }}
+                  className={classes.group}
+                  justify="flex-end"
                 >
-                  Done Task
-                </Button>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  className={classes.button}
-                  onClick={() => props.onEditTask(taskId, props.tasks[taskId])}
-                >
-                  Edit Task
-                </Button>
-              </Grid>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    className={classes.button}
+                    onClick={(e) => doneTask(e, taskId)}
+                  >
+                    Done Task
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    className={classes.button}
+                    onClick={(e) => props.onEditTask(e, taskId, props.tasks[taskId])}
+                  >
+                    Edit Task
+                  </Button>
+                </Grid>
+              ) : null}
             </Grid>
           </React.Fragment>
         </Paper>
@@ -140,7 +156,12 @@ const TasksList = (props) => {
         aria-describedby="simple-modal-description"
         className={classes.modal}
       >
-        <TaskDetails task={selectedTask.current} />
+        <TaskDetails
+          task={selectedTask.current}
+          editTask={onEditTask}
+          doneTask={(e) => doneTask(e, selectedTaskId.current)}
+          deleteTask={onDeleteTask}
+        />
       </Modal>
     </main>
   );
@@ -149,6 +170,7 @@ const TasksList = (props) => {
 TasksList.propTypes = {
   tasks: PropTypes.object,
   onEditTask: PropTypes.func,
+  doneTasks: PropTypes.bool,
 };
 
 export default TasksList;

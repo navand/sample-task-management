@@ -43,6 +43,11 @@ export function task(state = initialState, action) {
         tasks: newTasks,
         doneTasks: { ...state.doneTasks, [action.taskId]: state.tasks[action.taskId] },
       };
+    case taskTypes.DELETE_TASK:
+      return {
+        ...state,
+        tasks: action.tasks,
+      };
     default:
       return state;
   }

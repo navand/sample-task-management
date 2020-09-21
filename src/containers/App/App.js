@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   CssBaseline,
@@ -14,8 +14,7 @@ import {
 import AddIcon from '@material-ui/icons/Add';
 import CreateTask from '../../components/CreateTask/CreateTask';
 import TasksList from '../../components/TasksList/TasksList';
-import { taskActions } from '../../actions';
-import _ from 'lodash';
+import DoneTasks from '../../components/DoneTasks/DoneTasks';
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -73,21 +72,27 @@ const useStyles = makeStyles((theme) => ({
 
 const App = () => {
   const classes = useStyles();
-  const dispatch = useDispatch();
   const tasks = useSelector((state) => state.task.tasks);
+  const doneTasks = useSelector((state) => state.task.doneTasks);
   const [open, setOpen] = useState(false);
   const editMode = useRef(false);
   const selectedTaskId = useRef(0);
   const selectedTask = useRef({});
+  const showDoneTasks = useRef(false);
 
   const createTask = () => {
     editMode.current = false;
+    showDoneTasks.current = false;
     setOpen(true);
   };
 
-  const showDoneTask = () => {};
+  const showDoneTask = () => {
+    showDoneTasks.current = true;
+    setOpen(true);
+  };
 
-  const onEditTask = (taskId, task) => {
+  const onEditTask = (e, taskId, task) => {
+    e.stopPropagation();
     editMode.current = true;
     selectedTaskId.current = taskId;
     selectedTask.current = task;
@@ -103,11 +108,11 @@ const App = () => {
       <CssBaseline />
       <AppBar position="absolute" color="default" className={classes.appBar}>
         <Toolbar>
-          {Object.keys(tasks).length > 0 ? (
+          {Object.keys(doneTasks).length > 0 ? (
             <Button
               variant="contained"
               color="primary"
-              onClick={createTask}
+              onClick={showDoneTask}
               style={{ position: 'absolute' }}
             >
               View Done Tasks
@@ -122,7 +127,7 @@ const App = () => {
         <Paper className={classes.paper}>
           {Object.keys(tasks).length > 0 ? (
             <>
-              <TasksList tasks={tasks} onEditTask={onEditTask} />
+              <TasksList tasks={tasks} doneTasks={false} onEditTask={onEditTask} />
               <Fab
                 color="primary"
                 aria-label="add"
@@ -153,12 +158,16 @@ const App = () => {
         aria-describedby="simple-modal-description"
         className={classes.modal}
       >
-        <CreateTask
-          close={handleClose}
-          editMode={editMode.current}
-          taskId={selectedTaskId.current}
-          task={selectedTask.current}
-        />
+        {showDoneTasks.current ? (
+          <DoneTasks tasks={doneTasks} />
+        ) : (
+          <CreateTask
+            close={handleClose}
+            editMode={editMode.current}
+            taskId={selectedTaskId.current}
+            task={selectedTask.current}
+          />
+        )}
       </Modal>
     </React.Fragment>
   );
