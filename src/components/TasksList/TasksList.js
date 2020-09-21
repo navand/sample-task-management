@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import { Modal, Typography, Paper, Button, Grid } from '@material-ui/core';
 import { taskActions } from '../../actions';
+import TaskDetails from '../TaskDetails/TaskDetails';
 import clsx from 'clsx';
 
 const useStyles = makeStyles((theme) => ({
@@ -52,15 +53,28 @@ const useStyles = makeStyles((theme) => ({
     height: 40,
     float: 'inline-end',
   },
+  modal: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 }));
 
 const TasksList = (props) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
+  const selectedTaskId = useRef(0);
+  const selectedTask = useRef({});
 
   const doneTask = (taskId) => {
     dispatch(taskActions.done(taskId));
+  };
+
+  const showTaskDetails = (taskId, task) => {
+    selectedTaskId.current = taskId;
+    selectedTask.current = task;
+    setOpen(true);
   };
 
   const handleClose = () => {
@@ -70,7 +84,11 @@ const TasksList = (props) => {
   return (
     <main className={classes.layout}>
       {Object.keys(props.tasks).map((taskId, index) => (
-        <Paper key={index} className={classes.paper}>
+        <Paper
+          key={index}
+          className={classes.paper}
+          onClick={() => showTaskDetails(taskId, props.tasks[taskId])}
+        >
           <React.Fragment>
             <Grid container spacing={2}>
               <Grid item xs={6} style={{ textAlign: 'left' }}>
@@ -121,7 +139,9 @@ const TasksList = (props) => {
         aria-labelledby="simple-modal-title"
         aria-describedby="simple-modal-description"
         className={classes.modal}
-      ></Modal>
+      >
+        <TaskDetails task={selectedTask.current} />
+      </Modal>
     </main>
   );
 };
