@@ -1,7 +1,7 @@
 import { taskTypes } from '../actions/types';
 
 const initialState = {
-  lastTaskId: 0,
+  lastTaskId: 2,
   tasks: {
     1: {
       title: 'Sample title',
@@ -33,6 +33,15 @@ export function task(state = initialState, action) {
       return {
         ...state,
         tasks: { ...state.tasks, [action.taskId]: action.task },
+      };
+    case taskTypes.DONE_TASK:
+      // eslint-disable-next-line no-case-declarations
+      const newTasks = { ...state.tasks };
+      delete newTasks[action.taskId];
+      return {
+        ...state,
+        tasks: newTasks,
+        doneTasks: { ...state.doneTasks, [action.taskId]: state.tasks[action.taskId] },
       };
     default:
       return state;

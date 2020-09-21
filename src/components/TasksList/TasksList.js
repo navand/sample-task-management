@@ -1,11 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
-import { Card, CardContent, Typography, Paper, Button, Grid } from '@material-ui/core';
+import { Modal, Typography, Paper, Button, Grid } from '@material-ui/core';
+import { taskActions } from '../../actions';
 import clsx from 'clsx';
 
 const useStyles = makeStyles((theme) => ({
+  layout: {
+    width: 'auto',
+    marginLeft: theme.spacing(2),
+    marginRight: theme.spacing(2),
+    [theme.breakpoints.up(700 + theme.spacing(2) * 2)]: {
+      marginLeft: 'auto',
+      marginRight: 'auto',
+    },
+    overflowY: 'auto',
+    maxHeight: 500,
+    marginBottom: 48,
+  },
   paper: {
     width: '700px',
     marginTop: theme.spacing(3),
@@ -43,11 +56,19 @@ const useStyles = makeStyles((theme) => ({
 
 const TasksList = (props) => {
   const classes = useStyles();
+  const dispatch = useDispatch();
+  const [open, setOpen] = useState(false);
 
-  const doneTask = () => {};
+  const doneTask = (taskId) => {
+    dispatch(taskActions.done(taskId));
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   return (
-    <>
+    <main className={classes.layout}>
       {Object.keys(props.tasks).map((taskId, index) => (
         <Paper key={index} className={classes.paper}>
           <React.Fragment>
@@ -73,7 +94,12 @@ const TasksList = (props) => {
                 className={classes.group}
                 justify="flex-end"
               >
-                <Button variant="contained" color="primary" className={classes.button}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  className={classes.button}
+                  onClick={() => doneTask(taskId)}
+                >
                   Done Task
                 </Button>
                 <Button
@@ -89,7 +115,14 @@ const TasksList = (props) => {
           </React.Fragment>
         </Paper>
       ))}
-    </>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="simple-modal-title"
+        aria-describedby="simple-modal-description"
+        className={classes.modal}
+      ></Modal>
+    </main>
   );
 };
 

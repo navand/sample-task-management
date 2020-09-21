@@ -30,11 +30,9 @@ const useStyles = makeStyles((theme) => ({
       marginLeft: 'auto',
       marginRight: 'auto',
     },
-    overflowY: 'auto',
-    maxHeight: 700,
   },
   paper: {
-    textAlign: 'right',
+    textAlign: 'center',
     marginTop: theme.spacing(3),
     marginBottom: theme.spacing(3),
     padding: theme.spacing(2),
@@ -43,6 +41,7 @@ const useStyles = makeStyles((theme) => ({
       marginBottom: theme.spacing(6),
       padding: theme.spacing(3),
     },
+    paddingBottom: 40,
   },
   stepper: {
     padding: theme.spacing(3, 0, 5),
@@ -65,6 +64,10 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  circleButton: {
+    float: 'right',
+    marginTop: '-38px',
   },
 }));
 
@@ -105,7 +108,7 @@ const App = () => {
               variant="contained"
               color="primary"
               onClick={createTask}
-              style={{ float: 'left' }}
+              style={{ position: 'absolute' }}
             >
               View Done Tasks
             </Button>
@@ -120,7 +123,12 @@ const App = () => {
           {Object.keys(tasks).length > 0 ? (
             <>
               <TasksList tasks={tasks} onEditTask={onEditTask} />
-              <Fab color="primary" aria-label="add" onClick={createTask}>
+              <Fab
+                color="primary"
+                aria-label="add"
+                className={classes.circleButton}
+                onClick={createTask}
+              >
                 <AddIcon />
               </Fab>
             </>
